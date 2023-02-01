@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title>Gestion des salles Cours & Méthodes</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+</head>
+
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+
+
+    <nav class="navbar navbar-expand-lg bg-body-primary">
+        <div id="classrooms" class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="/img/banner.jpg" alt="CPF" width="150" height="75">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link bg-primary" role="button" href="#">Salle Dinan Angle</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" role="button" href="#">Salle Dinan Hesry</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" role="button" href="#">Salle Lamballe</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" role="button" href="#">Salle Saint Malo</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <pre id="content" style="white-space: pre-wrap;"></pre>
+
+    <div class="row">
+        <div id="leftPanel" class="col">
+            <div id="actionButton" class="container row g-3">
+                <button id="howTo" type="button" class="d-block m-2 col-sm-2 btn btn-warning" data-bs-toggle="modal"
+                    data-bs-target="#howToModal">Aide</button>
+                <button id="bookClassroon" type="button" class="d-block m-2 col-sm-3 btn btn-primary" disabled>Réserver
+                    une
+                    salle</button>
+                <button id="modifyBooking" type="button" class="d-block m-2 col-sm-2 btn btn-secondary"
+                    disabled>Supprimer une réservation</button>
+            </div>
+
+
+            <div id="userActionFormsWrapper" class="position-relative">
+                <div id="infoDisplay" class="opacity-100 w-100 h-25 z-1 position-absolute top-50"
+                    style="display: none;">
+                </div>
+
+                <div id="userForms" class="container-md m-2">
+                    <form id="createEventFormWrapper" style="display: none;" needs-validation autocomplete="off">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="user-name" class="form-label">Nom</label>
+                                <input name="user-name" type="text" placeholder="Nom" required autofocus id="nameInput"
+                                    class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="discipline" class="form-label">Matière</label>
+                                <input name="discipline" type="text" placeholder="Matière" required autofocus
+                                    id="disciplineInput" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="start-date" class="form-label">Date</label>
+                                <input name="start-date" type="datetime-local" placeholder="Jour et heure de départ"
+                                    required autofocus id="startDateInput" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="duration" class="form-label">Durée</label>
+                                <input name="duration" placeholder="Durée en heure (1.5 pour 1h30)" required
+                                    pattern="[0-9]+.?[0-9]*" autofocus id="durationInput" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="recurenceCheck" name="recurrence">
+                                <label class="form-check-label" for="recurence">
+                                    Réservation récurrente sur le même créneau?
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6" id="recurenceInput" style="display: none;">
+                            <label for="end-date" class="form-label">jusqu'au</label>
+                            <input name="end-date" type="date" placeholder="Dernier jour prévu (inclus)" autofocus
+                                id="endDateInput" class="form-control">
+                        </div>
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="col-6">
+                                <button id="addEventSubmit" type="submit" class="btn btn-primary">Envoyer</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="modifyEventFormWrapper" style="display: none;">
+                        <form id="modifyEventForm" needs-validation autocomplete="off">
+                            <div class="col-md-3">
+                                <label for="day-mofify" class="form-label">Recherche à partir du jour:</label>
+                                <input name="day-modify" type="date" placeholder="Jour" required autofocus
+                                    id="dayModifyInput" class="form-control">
+                            </div>
+                            <div class="row-col-5 my-3">
+                                <button id="searchSubmit" type="submit" class="btn btn-primary">Rechercher</button>
+                            </div>
+                        </form>
+                        <div id="evenList"></div>
+                    </div>
+                </div>
+
+                <div id="suppressModal" class="modal fade" tabindex="-1" aria-hidden="true" style="top: 50%;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title fs-5" id="suppressModalLabel">Supprimer un créneau</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="button" class="btn btn-primary" id="sendDelete">Confirmer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="calendar" class="mx-3">
+                <div class="iframe-calendar show">
+                    <iframe style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+                </div>
+                <div class="iframe-calendar" style="display: none;">
+                    <iframe style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+                </div>
+                <div class="iframe-calendar" style="display: none;">
+                    <iframe style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+                </div>
+                <div class="iframe-calendar" style="display: none;">
+                    <iframe style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+                </div>
+            </div>
+        </div>
+        <div id="rightPanel" class="col-6 d-none d-lg-block d-xl-block d-xxl-block mx-4">
+            <h3>Comment réserver?</h3>
+            <ul>
+                <li>Cliquez ci-dessus sur le nom de la salle que vous souhaitez réserver pour votre cours. Vous
+                    y trouverez un calendrier avec les réservations déjà effectuées.</li>
+                <li>Cliquez sur Réserver un créneau à ...</li>
+                <li>Une fenêtre de connexion s'affiche. Connectez vous avec les identifiants fournis par Cours
+                    et Méthodes et validez</li>
+                <li>Renseigner tous les champs</li>
+                <li>Cochez récurrence si vous souhaitez réserver un même créneau plusieurs semaines d'affilée.
+                    Dans ce cas, renseignez la date butoir de vos réservations.</li>
+                <li>Cliquez sur Envoyer. Pour voir votre réservation sur le calendrier, rafraichissez la page.
+                </li>
+            </ul>
+            <h3>Comment supprimer une réservation?</h3>
+            <ul>
+                <li>Cliquez ci-dessus sur le nom de la salle que vous souhaitez réserver pour votre cours. Vous
+                    y trouverez un calendrier avec les réservations déjà effectuées.</li>
+                <li>Cliquez sur Supprimer une réservation.</li>
+                <li>Renseignez le jour de la réservation à supprimer</li>
+                <li>Toutes les réservations du jour s'affichent. Supprimez la réservation visée. Attention, vous
+                    pouvez supprimer n'importe quelle réservation, y compris celle d'un autre formateur.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="howToModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fs-5" id="HowToModalLabel">Aide</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h3>Comment réserver?</h3>
+                    <ul>
+                        <li>Cliquez ci-dessus sur le nom de la salle que vous souhaitez réserver pour votre cours. Vous
+                            y trouverez un calendrier avec les réservations déjà effectuées.</li>
+                        <li>Cliquez sur Réserver un créneau à ...</li>
+                        <li>Une fenêtre de connexion s'affiche. Connectez vous avec les identifiants fournis par Cours
+                            et Méthodes et validez</li>
+                        <li>Renseigner tous les champs</li>
+                        <li>Cochez récurrence si vous souhaitez réserver un même créneau plusieurs semaines d'affilée.
+                            Dans ce cas, renseignez la date butoir de vos réservations.</li>
+                        <li>Cliquez sur Envoyer. Pour voir votre réservation sur le calendrier, rafraichissez la page.
+                        </li>
+                    </ul>
+                    <h3>Comment supprimer une réservation?</h3>
+                    <ul>
+                        <li>Cliquez ci-dessus sur le nom de la salle que vous souhaitez réserver pour votre cours. Vous
+                            y trouverez un calendrier avec les réservations déjà effectuées.</li>
+                        <li>Cliquez sur Supprimer une réservation.</li>
+                        <li>Renseignez le jour de la réservation à supprimer</li>
+                        <li>Toutes les réservations du jour s'affichent. Supprimez la réservation visée. Attention, vous
+                            pouvez supprimer n'importe quelle réservation, y compris celle d'un autre formateur.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        let tokenClient;
+        let gapiInited = false;
+        let gisInited = false;
+
+        /**
+        * Callback after api.js is loaded.
+        */
+        function gapiLoaded() {
+            gapi.load('client', initializeGapiClient);
+        }
+
+        /**
+        * Callback after the API client is loaded. Loads the
+        * discovery doc to initialize the API.
+        */
+        async function initializeGapiClient() {
+            const response = await fetch('./calendarsrc.json');
+            const keys = await response.json();
+            await gapi.client.init({
+                apiKey: keys.API_KEY,
+                discoveryDocs: [keys.DISCOVERY_DOC],
+            });
+            gapiInited = true;
+            maybeEnableButtons();
+        }
+
+        /**
+        * Callback after Google Identity Services are loaded.
+        */
+        async function gisLoaded() {
+            const response = await fetch('./calendarsrc.json');
+            const keys = await response.json();
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: keys.CLIENT_ID,
+                scope: keys.SCOPES,
+                callback: '', // defined later
+            });
+            gisInited = true;
+            maybeEnableButtons();
+        }
+
+        /**
+        * Enables user interaction after all libraries are loaded.
+        */
+        function maybeEnableButtons() {
+            if (gapiInited && gisInited) {
+                document.getElementById('bookClassroon').disabled = false;
+                document.getElementById('modifyBooking').disabled = false;
+            }
+        }
+
+        function displayCreateForm() {
+            if (gapi.client.getToken() === null) {
+                // Prompt the user to select a Google Account and ask for consent to share their data
+                // when establishing a new session.
+                tokenClient.requestAccessToken({ prompt: 'consent' });
+            } else {
+                // Skip display of account chooser and consent dialog for an existing session.
+                tokenClient.requestAccessToken({ prompt: '' });
+            }
+            document.getElementById('createEventFormWrapper').style.visibility = 'visible';
+        }
+
+        /**
+         * Display a message on an overlay for a short period
+         */
+        function displayInfoMessage(bsclasse, message, delayParam = 2000) {
+            $("#infoDisplay").empty();
+            $("#infoDisplay").prepend("<div class=\"" + bsclasse + " p-4\">" + message + "</div>");
+            $("#infoDisplay").show().delay(delayParam).fadeOut(300);
+        }
+
+        $(document).ready(async function () {
+            $("#recurenceCheck").removeAttr("checked");
+            var currentCalId;
+            fetch('./calendarsrc.json')
+                .then((res) => res.json())
+                .then((data) => {
+                    $(".iframe-calendar").each(function (index) {
+                        $(".iframe-calendar")[index].setAttribute("id", data.calendars[index].id);
+                        $(".iframe-calendar").eq(index).find("iframe")[0].setAttribute("src", data.calendars[index].src);
+                        // Set the calendarID to the init tab
+                        currentCalId = $("#calendar").children().eq($(".nav-link.bg-primary").parent().index()).attr("id");
+                    })
+                })
+            $("#bookClassroon").text("Réserver un créneau à " + $(".nav-link.bg-primary").text().split("Salle")[1]);
+
+            $(".nav-link").click(function () {
+                $(".nav-link").removeClass("bg-primary");
+                $(this).addClass("bg-primary");
+                $(".iframe-calendar").hide();
+                $("#calendar").children().eq($(this).parent().index()).show();
+                currentCalId = $("#calendar").children().eq($(this).parent().index()).attr("id");
+                console.log(currentCalId);
+
+                $("#bookClassroon").text("Réserver un créneau à " + $(this).text().split("Salle")[1]);
+            });
+
+            // Display the event creation form
+            $("#bookClassroon").click(function () {
+                tokenClient.callback = (resp) => {
+                    if (resp.error !== undefined) {
+                        throw (resp);
+                    }
+                    $("#modifyEventFormWrapper").hide();
+                    $("#createEventFormWrapper").show();
+                };
+
+                if (gapi.client.getToken() === null) {
+                    // Prompt the user to select a Google Account and ask for consent to share their data
+                    // when establishing a new session.
+                    tokenClient.requestAccessToken({ prompt: 'consent' });
+                } else {
+                    // Skip display of account chooser and consent dialog for an existing session.
+                    tokenClient.requestAccessToken({ prompt: '' });
+                }
+            });
+
+            // Display the event suppression form
+            $("#modifyBooking").click(function () {
+                tokenClient.callback = (resp) => {
+                    if (resp.error !== undefined) {
+                        throw (resp);
+                    }
+                    $("#createEventFormWrapper").hide();
+                    $("#modifyEventFormWrapper").show();
+                };
+
+                if (gapi.client.getToken() === null) {
+                    // Prompt the user to select a Google Account and ask for consent to share their data
+                    // when establishing a new session.
+                    tokenClient.requestAccessToken({ prompt: 'consent' });
+                } else {
+                    // Skip display of account chooser and consent dialog for an existing session.
+                    tokenClient.requestAccessToken({ prompt: '' });
+                }
+            });
+
+            // Display the input element for reccurence events insert
+            $("#recurenceCheck").click(function () {
+                $("#recurenceInput").toggle();
+            });
+
+            // Submit the event insert form
+            $("#createEventFormWrapper").submit(function (event) {
+                event.preventDefault();
+                try {
+                    var startdate = new Date($("#startDateInput").val());
+                    var enddate = new Date($("#startDateInput").val());
+                    if ($("#durationInput").val() <= 0) {
+                        throw new Error("La durée du cours doit être supérieure à 0.");
+                    }
+                    enddate.setMinutes(enddate.getMinutes() + parseFloat($("#durationInput").val()) * 60);
+
+                    var summary = $("#nameInput").val().concat(" - ", $("#disciplineInput").val());
+
+                    var recurrence = [];
+                    if (($("#recurenceCheck").prop("checked") == true) && ($("#endDateInput").val().length > 0)) {
+                        recurrence = ["RRULE:FREQ=WEEKLY;UNTIL=" + $("#endDateInput").val().replace(/-/g, "")];
+                    }
+                    if (($("#recurenceCheck").prop("checked") == true) && ($("#endDateInput").val().length <= 0)) {
+                        throw new Error("Indiquer une date de fin pour la récurrence");
+                    }
+                    gapi.client.calendar.events.list({
+                        "calendarId": currentCalId,
+                        "timeMax": enddate.toISOString(),
+                        "timeMin": startdate.toISOString(),
+                        "timeZone": "Europe/Paris"
+                    }).then(function (response) {
+                        if (response.result.items.length !== 0) {
+                            displayInfoMessage("bg-danger", "La salle est déjà réservée à cette heure.");
+                        } else {
+                            gapi.client.calendar.events.insert({
+                                "calendarId": currentCalId,
+                                "resource": {
+                                    "end": {
+                                        "dateTime": enddate.toISOString(),
+                                        "timeZone": "Europe/Paris"
+                                    },
+                                    "start": {
+                                        "dateTime": startdate.toISOString(),
+                                        "timeZone": "Europe/Paris"
+                                    },
+                                    "summary": summary,
+                                    "recurrence": recurrence
+                                }
+                            }).then(function (response) {
+                                displayInfoMessage("bg-success", "Réservation effectuée.");
+                            }, function (error) {
+                                displayInfoMessage("bg-danger", "Erreur renvoyée par le serveur: " + err.message);
+                            })
+                        }
+                    }, function (error) {
+                        displayInfoMessage("bg-danger", "Erreur renvoyée par le serveur: " + err.message);
+                    })
+                }
+                catch (e) {
+                    displayInfoMessage("bg-danger", "Erreur lors de la saisie : " + e.message);
+                }
+            });
+
+            // Submit the event search form
+            $("#modifyEventForm").submit(function (event) {
+                event.preventDefault();
+                $("#evenList").empty();
+                var startdate = new Date($("#dayModifyInput").val());
+                var enddate = new Date(startdate);
+                enddate.setDate(enddate.getDate() + 1);
+
+                gapi.client.calendar.events.list({
+                    "calendarId": currentCalId,
+                    "timeMax": enddate.toISOString(),
+                    "timeMin": startdate.toISOString(),
+                    "timeZone": "Europe/Paris"
+                }).then(function (response) {
+
+                    if (response.result.items.length == 0) {
+                        displayInfoMessage("bg-secondary", "Pas de réservation ce jour là", 1000);
+                        // $("#infoDisplay").empty();
+                        // $("#infoDisplay").prepend("<div class=\"bg-secondary p-4\">Pas de réservation ce jour là</div>")
+                        // $("#infoDisplay").show().delay(2000).fadeOut(300);
+                    } else {
+                        response.result.items.forEach(element => {
+                            var startdate = new Date(element.start.dateTime);
+                            var enddate = new Date(element.end.dateTime);
+                            var starttime = startdate.getHours() + ((startdate.getMinutes() < 10) ? ":0" : ":") + startdate.getMinutes();
+                            var endtime = enddate.getHours() + ":" + enddate.getMinutes();
+
+                            var adding_element = "<div id=" + element.id + ">" + element.summary + " de " + starttime + " à " + endtime + "\
+                                                    <button id=\"suppress\" type=\"button\" class=\"btn btn-primary\" data-bs-toggle=\"modal\" data-bs-target=\"#suppressModal\">Supprimer</button>"+ "\
+                                                    </div>";
+                            $("#evenList").append(adding_element);
+                        });
+                        //$("#evenList").text(response.result.items.length+" réservations ce jour là");
+                    }
+                })
+            });
+
+            // Display current event in modal
+            $("#suppressModal").on("show.bs.modal", function (event) {
+                const button = event.relatedTarget;
+                const recipient = button.parentElement.innerText;
+                const eventid = button.parentElement.getAttribute("id");
+                $(this).find(".modal-footer").first().attr("id", eventid);
+                $(this).find(".modal-body").first().text(recipient + "?");
+            });
+
+            // Send the delete request
+            $(document).on("click", "#sendDelete", function () {
+                gapi.client.calendar.events.delete({
+                    "calendarId": currentCalId,
+                    "eventId": $(this).parent().attr("id") // id in div.modal-footer
+                }).then(function (response) {
+                    event.preventDefault();
+                    $("#suppressModal").modal('hide');
+                }).then(function (res) {
+                    displayInfoMessage("bg-success", "Réservation supprimée avec succès", 1500);
+                    $("#" + $(this).parent().attr("id")).hide();
+                }.bind(this));
+            });
+        });
+
+    </script>
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+</body>
+
+</html>
